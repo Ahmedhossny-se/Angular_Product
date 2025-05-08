@@ -136,7 +136,7 @@ export class ProductsComponent implements OnInit, AfterViewInit,OnChanges {
       },
       complete: () => {
         this.loading = false;
-        this.searchLoading = false;
+        //this.searchLoading = false;
         this.loaderService.endLoad();
       }  
     })     
@@ -145,28 +145,31 @@ export class ProductsComponent implements OnInit, AfterViewInit,OnChanges {
   changePage(page:number,limit:number)
   {
     this.loading = true;
-    this.prdService.GetAllProducts(page,limit).subscribe({
-      next:(res:any) => {  
-        this.prdListOfCat = res.products;   
-        this.data = this.prdListOfCat;     
-        this.length = this.prdListOfCat.length;
-        this.totalItems = res.total;    
-        console.log(this.totalItems);  
-        this.loaderService.beginLoad();        
-      },
-      error: (err) => {
-        console.error('Error loading products:', err);
-      },
-      complete: () => {
-        this.loading = false;
-        this.loaderService.endLoad();     
-        if (this.paginator) {
-          this.paginator.length = this.totalItems;
-          this.paginator.pageIndex = page;
-          console.log(page);          
+    if(!this.searchLoading)
+    {
+      this.prdService.GetAllProducts(page,limit).subscribe({
+        next:(res:any) => {  
+          this.prdListOfCat = res.products;   
+          this.data = this.prdListOfCat;     
+          this.length = this.prdListOfCat.length;
+          this.totalItems = res.total;    
+          console.log(this.totalItems);  
+          this.loaderService.beginLoad();        
+        },
+        error: (err) => {
+          console.error('Error loading products:', err);
+        },
+        complete: () => {
+          this.loading = false;
+          this.loaderService.endLoad();     
+          if (this.paginator) {
+            this.paginator.length = this.totalItems;
+            this.paginator.pageIndex = page;
+            console.log(page);          
+          }  
         }  
-      }  
-    })
+      })
+    }
   }
 
   sortProducts(sort: Sort):void
